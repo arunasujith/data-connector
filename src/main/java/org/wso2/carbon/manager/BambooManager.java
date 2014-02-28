@@ -82,7 +82,6 @@ public class BambooManager {
         bambooCommitsArray[4] =  data.getDate();
 
         return bambooCommitsArray;
-
     }
 
     /**
@@ -138,7 +137,6 @@ public class BambooManager {
             bambooEmmaDataArray[15] = packageData.getLineCoverage();
 
             bambooEmmaDataList.add(bambooEmmaDataArray);
-
         }
         return bambooEmmaDataList;
     }
