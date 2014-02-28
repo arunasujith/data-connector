@@ -13,5 +13,5 @@ GREG_PASSWORD   =   admin
 WSO2_BAMBOO_URL =   https://wso2.org/bamboo/rest/api/latest
 WSO2_GIT_URL    =   https://api.github.com/repos/
 
-GTIHUB_TOKEN    =   token 9c52f8a6a0051059051f8ab3ae9ec110efaa20a5
+GTIHUB_TOKEN    =   token <token value>
 
