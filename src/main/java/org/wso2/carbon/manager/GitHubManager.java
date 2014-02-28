@@ -44,7 +44,6 @@ public class GitHubManager {
         } finally {
 
         }
-
     }
 
     /**
@@ -80,7 +79,6 @@ public class GitHubManager {
         return gitDataArray;
 
     }
-
 
     /**
      * Convert GitHubCommitsData to String array
