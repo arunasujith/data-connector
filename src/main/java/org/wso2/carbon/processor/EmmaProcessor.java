@@ -35,15 +35,6 @@ public class EmmaProcessor {
         //return "http://localhost:8085/browse/WSO2-ORBIT-2/artifact/shared/artifact_emma/coverage.xml";
     }
 
-//    /**
-//     * Get the emma data results bean
-//     *
-//     * @return EmmaData bean
-//     */
-//    public EmmaData getEmmaData() {
-//        return emmaData;
-//    }
-
     /**
      * Download and extract the emma data
      *
