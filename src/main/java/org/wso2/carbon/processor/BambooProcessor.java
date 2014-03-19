@@ -315,7 +315,7 @@ public class BambooProcessor {
                     bean.setBuildState((String) jsonObject.get(Constants.STATE));
                     bean.setBuildDate(((String) jsonObject.get(Constants.BUILD_COMPLETED_TIME)).substring(0, 19));
                     bean.setRelativeBuildDate((String) jsonObject.get(Constants.BUILD_RELATIVE_TIME));
-
+                    bean.setSuccessRate(calculateSuccessRate( bean.getPlanID()));
 
                     JSONObject commitsJonObject = (JSONObject) jsonObject.get(Constants.CHANGES);
                     JSONArray commitsJsonArray = (JSONArray) commitsJonObject.get(Constants.CHANGE);
@@ -335,17 +335,7 @@ public class BambooProcessor {
                     }
                 }
             }
-            // calculate the success rate
-            String jsonString;
-            try {
-                jsonString = getBambooRestData(Constants.BUILD_PLAN, bean.getPlanID(), "", "");
-            } catch (Exception e) {
-                log.error("Exception ", e);
-                jsonString = "{}";
-            }
 
-            float successRate = calculateSuccessRate(jsonString);
-            bean.setSuccessRate(successRate);
         } catch (ParseException e) {
             log.error("PARSE EXCEPTION", e);
         }
@@ -354,14 +344,22 @@ public class BambooProcessor {
     }
 
     /**
-     * Return the success rate for a particular build plan
+     * Return the success rate for a particular build planID
      *
-     * @param jsonString json String os a particular build plan
+     * @param planID build plan id
      * @return success rate
      */
-    public float calculateSuccessRate(String jsonString) {
+    public float calculateSuccessRate(String planID) {
 
         float successRate = 0;
+        String jsonString;
+        try {
+            jsonString = getBambooRestData(Constants.BUILD_PLAN, planID , "", "");
+        } catch (Exception e) {
+            log.error("Exception ", e);
+            jsonString = "{}";
+        }
+
         try {
             JSONParser parser = new JSONParser();
             Object obj = parser.parse(jsonString);
