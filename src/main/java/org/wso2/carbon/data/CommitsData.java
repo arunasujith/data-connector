@@ -3,22 +3,22 @@ package org.wso2.carbon.data;
 /**
  * Created by aruna on 2/9/14.
  */
-public class BambooCommitsData {
+public class CommitsData {
 
 
 
-    private String planID;
+    private String id;
     private String commitAuthor;
     private String comment;
     private String changesetID;
     private String date;
 
-    public String getPlanID() {
-        return planID;
+    public String getId() {
+        return id;
     }
 
-    public void setPlanID(String planID) {
-        this.planID = planID;
+    public void setId(String id) {
+        this.id = id;
     }
     public String getCommitAuthor() {
         return commitAuthor;
