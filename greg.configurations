@@ -1,0 +1,16 @@
+GREG_HOME       =   /home/aruna/Desktop/training/wso2store-1.0.0
+BAM_HOME        =   /home/aruna/Desktop/training/wso2bam-2.4.0
+
+BAM_HOST_NAME   =   localhost
+BAM_PORT        =   7611
+BAM_USERNAME    =   admin
+
+GREG_URL        =   https://localhost:9445/admin/registry/
+GREG_USERNAME   =   admin
+
+WSO2_BAMBOO_URL =   https://wso2.org/bamboo/rest/api/latest
+WSO2_GIT_URL    =   https://api.github.com/repos/
+WSO2_JENKINS_URL =  http://ec2-54-83-33-151.compute-1.amazonaws.com:8080/
+
+GTIHUB_TOKEN    =   token 9c52f8a6a0051059051f8ab3ae9ec110efaa20a5
+
