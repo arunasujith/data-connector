@@ -4,16 +4,16 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.wso2.carbon</groupId>
-    <artifactId>data-connector</artifactId>
-    <version>1.0.0</version>
-    <packaging>jar</packaging>
+    <groupId>governance-data-collector</groupId>
+    <artifactId>governance-data-collector</artifactId>
+    <packaging>pom</packaging>
+    <version>1.0-SNAPSHOT</version>
 
-    <repositories>
-        <repository>
-            <id>org.wso2.carbon</id> <url>http://dist.wso2.org/maven2/</url>
-        </repository>
-    </repositories>
+
+    <modules>
+        <module>connector</module>
+        <module>publisher</module>
+    </modules>
 
     <dependencies>
         <dependency>
@@ -73,50 +73,10 @@
             <artifactId>org.wso2.carbon.governance.api</artifactId>
             <version>4.2.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk16</artifactId>
+            <version>1.46</version>
+        </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
-                </configuration>
-            </plugin>
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <testFailureIgnore>true</testFailureIgnore>
-                </configuration>
-            </plugin>
-            <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <configuration>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
-                    <archive>
-                        <manifest>
-                            <mainClass>org.wso2.carbon.main.Main</mainClass>
-                            <packageName>org.wso2.carbon.main</packageName>
-                        </manifest>
-                        <manifestEntries>
-                            <mode>development</mode>
-                            <url>${pom.url}</url>
-                        </manifestEntries>
-                    </archive>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>simple-command</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>attached</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
 </project>

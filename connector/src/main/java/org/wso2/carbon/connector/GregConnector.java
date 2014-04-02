@@ -6,15 +6,14 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.wso2.carbon.data.GRegData;
-import org.wso2.carbon.registry.core.Collection;
-import org.wso2.carbon.registry.core.Registry;
-import org.wso2.carbon.registry.core.exceptions.RegistryException;
 import org.wso2.carbon.governance.api.util.GovernanceUtils;
 import org.wso2.carbon.registry.app.RemoteRegistry;
+import org.wso2.carbon.registry.core.Collection;
+import org.wso2.carbon.registry.core.Registry;
 import org.wso2.carbon.registry.core.Resource;
-import org.wso2.carbon.util.Configurations;
-import org.wso2.carbon.util.Constants;
-import org.wso2.carbon.util.StringUtility;
+import org.wso2.carbon.registry.core.exceptions.RegistryException;
+import org.wso2.carbon.utils.Constants;
+import org.wso2.carbon.utils.GregUtility;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -30,13 +29,22 @@ import java.util.ArrayList;
 public class GregConnector {
 
     private static Logger log = Logger.getLogger(GregConnector.class);
+    private String gregHome;
+    private String gregURL;
+    private String gregUserName;
+    private String gregPassword;
 
-    public GregConnector() {
 
+    public GregConnector(String gregHome, String gregURl, String gregUserName, String gregPassword) {
+        this.gregHome = gregHome;
+        this.gregURL = gregURl;
+        this.gregUserName = gregUserName;
+        this.gregPassword = gregPassword;
     }
 
     /**
      * Initialize the Greg registry
+     *
      * @return
      */
     public Registry init() {
@@ -44,13 +52,13 @@ public class GregConnector {
         Registry governanceRegistry = null;
         try {
             System.setProperty("carbon.repo.write.mode", "true");
-            System.setProperty("javax.net.ssl.trustStore", Configurations.getGREG_HOME()
+            System.setProperty("javax.net.ssl.trustStore", gregHome
                     + "/repository/resources/security/client-truststore.jks");
             System.setProperty("javax.net.ssl.trustStorePassword", "wso2carbon");
             System.setProperty("javax.net.ssl.trustStoreType", "JKS");
 
-            Registry rootRegistry = new RemoteRegistry(Configurations.getGREG_URL(), Configurations.getGREG_USERNAME(), Configurations.getGREG_PASSWORD());
-            governanceRegistry = GovernanceUtils.getGovernanceUserRegistry(rootRegistry, Configurations.getGREG_USERNAME());
+            Registry rootRegistry = new RemoteRegistry(gregURL, gregUserName, gregPassword);
+            governanceRegistry = GovernanceUtils.getGovernanceUserRegistry(rootRegistry, gregUserName);
         } catch (RegistryException e) {
             log.error("Registry Exception ", e);
         } catch (MalformedURLException e) {
@@ -61,6 +69,7 @@ public class GregConnector {
 
     /**
      * Get the GregData Array List
+     *
      * @param governanceRegistry Registry object
      * @return GregData Array List
      */
@@ -76,12 +85,12 @@ public class GregConnector {
                     String[] ch = collection.getChildren();
                     for (int j = 0; j < ch.length; j++) {
                         Resource r = governanceRegistry.get(ch[j]);
-                        try{
+                        try {
                             byte[] contentBytes = (byte[]) r.getContent();
                             String content = new String(contentBytes);
                             gregDataList.add(parseXMLString(content));
-                        }catch(ClassCastException e){
-                            log.error("GREG Class cast Exception" , e);
+                        } catch (ClassCastException e) {
+                            log.error("GREG Class cast Exception", e);
                         }
 
                     }
@@ -95,10 +104,11 @@ public class GregConnector {
 
     /**
      * Parse the greg data xml string
+     *
      * @param xmlString greg xml string
      * @return GReg Data Object
      */
-    public GRegData parseXMLString(String xmlString) {
+    private GRegData parseXMLString(String xmlString) {
         GRegData gRegData = null;
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -112,18 +122,26 @@ public class GregConnector {
             NodeList otherNodeList = document.getElementsByTagName(Constants.OTHER);
 
             Node nNode = otherNodeList.item(0);
-            String gitRepoURL = null, bambooURL = null;
+            String gitRepoURL = null, buildUrl = null, buildType = null;
             if (nNode.getNodeType() == Node.ELEMENT_NODE) {
 
                 Element eElement = (Element) nNode;
                 gitRepoURL = eElement.getElementsByTagName(Constants.VERSION_CONTROL).item(0).getTextContent();
-                bambooURL = eElement.getElementsByTagName(Constants.CONTINUOUS_INTEGRATION).item(0).getTextContent();
+                buildUrl = eElement.getElementsByTagName(Constants.CONTINUOUS_INTEGRATION).item(0).getTextContent();
+                //buildType = eElement.getElementsByTagName(Constants.CONTINUOUS_INTEGRATION_TYPE).item(0).getTextContent();
+                buildType = "jenkins";
             }
 
             gRegData = new GRegData();
-            gRegData.setGithubOwnerName(StringUtility.getGitRepoOwner(gitRepoURL));
-            gRegData.setGithubRepoName(StringUtility.getGitRepoName(gitRepoURL));
-            gRegData.setBambooName(StringUtility.getBambooPorjectKey(bambooURL));
+            gRegData.setGithubOwnerName(GregUtility.getGitRepoOwner(gitRepoURL));
+            gRegData.setGithubRepoName(GregUtility.getGitRepoName(gitRepoURL));
+            if (buildType.equalsIgnoreCase("bamboo")) {
+                gRegData.setBambooName(GregUtility.getBambooPorjectKey(buildUrl));
+                log.info("Bamboo URL ADDDED :: " + buildUrl);
+            } else if (buildType.equalsIgnoreCase("jenkins")) {
+                gRegData.setJenkinsName((GregUtility.getJenkinsPorjectKey(buildUrl)));
+                log.info("Jenkins URL ADDDED :: " + buildUrl);
+            }
 
 
         } catch (ParserConfigurationException e) {
@@ -137,3 +155,4 @@ public class GregConnector {
     }
 
 }
+
